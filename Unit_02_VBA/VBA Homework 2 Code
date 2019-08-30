@@ -1,0 +1,186 @@
+Sub TickerVolume():
+
+' Loop through all sheets
+For Each ws In Worksheets
+
+ws.Columns("A:Q").AutoFit
+
+
+    ' Set the initial variable for the Ticker
+    Dim Ticker As String
+    
+    ' Create a counter for Opening Value
+    Dim OpeningValueCounter As Double
+    OpeningValueCounter = 0
+    
+    ' Set the initial variable for Opening Value
+    Dim OpeningValue As Double
+    
+    ' Set the initial variable for Closing Value
+    Dim ClosingValue As Double
+    
+    ' Set an intial variable for holding the Volume for each Ticker
+    Dim Volume As Double
+    Volume = 0
+    
+    ' Set an inital variable for Yearly Change
+    Dim YearlyChange As Double
+    
+    ' Set an intial variable for Percent Change
+    Dim PercentChange As Double
+    
+    ' Create the table headers for the Summary Table
+    ws.Cells(1, 9).Value = "Ticker"
+    ws.Cells(1, 10).Value = "Yearly Change"
+    ws.Cells(1, 11).Value = "Percent Change"
+    ws.Cells(1, 12).Value = "Total Stock Volume"
+    
+    
+    ' Keep track of the location for each Ticker in the Summary Table
+    Dim SummaryTableRow As Integer
+    SummaryTableRow = 2
+    
+    ' Loop through all Volume
+    LastRow = ws.Range("A" & Rows.Count).End(xlUp).Row
+    For i = 2 To LastRow
+    
+        ' Check if we are still within the same Ticker , if it is not...
+        If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+    
+            ' Set the Ticker name
+            Ticker = ws.Cells(i, 1).Value
+            
+            ' Set the Closing Value
+            ClosingValue = ws.Cells(i, 6).Value
+            
+            ' Calculate Yearly Change
+            YearlyChange = ClosingValue - OpeningValue
+            
+            ' If statement for catching a zero in division
+            If OpeningValue = 0 Then
+                PercentChange = ClosingValue * 100
+                
+                ElseIf YearlyChange = 0 Then
+                PercentChange = 0
+                
+                Else
+            
+                ' Calculate Percent Change
+                PercentChange = (YearlyChange / OpeningValue)
+            
+            End If
+        
+            ' Add to the Volume
+            Volume = Volume + ws.Cells(i, 7).Value
+            
+            ' Print the Ticker in the Summary Table
+            ws.Range("I" & SummaryTableRow).Value = Ticker
+            
+            ' Print the Yearly Change in the Summary Table
+            ws.Range("J" & SummaryTableRow).Value = YearlyChange
+            
+              ' Create if statement for formatting YearlyChange Green for Positive and Red for Negative
+            If YearlyChange < 0 Then
+               ws.Range("J" & SummaryTableRow).Interior.Color = vbRed
+            
+            ElseIf YearlyChange >= 0 Then
+                ws.Range("J" & SummaryTableRow).Interior.Color = vbGreen
+            
+            End If
+            
+            ' Print the Percent Change to the Summary Table
+            ws.Range("K" & SummaryTableRow).Value = Format(PercentChange, "Percent")
+            
+            ' Print the Volume to the Summary Table
+            ws.Range("L" & SummaryTableRow).Value = Volume
+            
+            ' Add one to the Summary Table Row
+            SummaryTableRow = SummaryTableRow + 1
+            
+            ' Reset the Volume
+            Volume = 0
+        
+            ' Reset the OpeningValueCounter
+            OpeningValueCounter = 0
+        
+        'If the cells immediately following a row is the same ticker...
+        Else
+        
+            'Add to the Volume
+            Volume = Volume + ws.Cells(i, 7).Value
+            
+             ' Create If statement for counter
+            If OpeningValueCounter < 1 Then
+            
+                ' Set the Opening Value
+                OpeningValue = ws.Cells(i, 3).Value
+                
+                ' Increment the OpeningValueCounter
+                OpeningValueCounter = OpeningValueCounter + 1
+                
+                End If
+            
+        End If
+    
+    Next i
+    
+Next ws
+
+End Sub
+
+Sub GreatestChanges():
+     
+    Dim GreatestIncrease As Double
+    Dim GreatestIncreaseTicker As String
+    Dim GreatestDecrease As Double
+    Dim GreatestDecreaseTicker As String
+    Dim GreatestVolume As Double
+    Dim GreatestVolumeTicker As String
+        
+        For Each ws In Worksheets
+    
+        LastRow = ws.Range("I" & Rows.Count).End(xlUp).Row
+        
+        For i = 2 To LastRow
+        
+            If ws.Cells(i, 11).Value > GreatestIncrease Then
+        
+                GreatestIncrease = ws.Cells(i, 11).Value
+                GreatestIncreaseTicker = ws.Cells(i, 9).Value
+            
+            ElseIf ws.Cells(i, 11).Value < GreatestDecrease Then
+            
+                GreatestDecrease = ws.Cells(i, 11).Value
+                GreatestDecreaseTicker = ws.Cells(i, 9).Value
+            
+            End If
+            
+            If ws.Cells(i, 12).Value > GreatestVolume Then
+            
+                GreatestVolume = ws.Cells(i, 12).Value
+                GreatestVolumeTicker = ws.Cells(i, 9).Value
+                
+            End If
+            
+        Next i
+        
+        ws.Cells(2, 15).Value = "Greatest % Increase"
+        ws.Cells(3, 15).Value = "Greatest % Decrease"
+        ws.Cells(4, 15).Value = "Greatest Total Volume"
+        ws.Cells(1, 16).Value = "Ticker"
+        ws.Cells(1, 17).Value = "Value"
+        
+        ws.Cells(2, 16).Value = GreatestIncreaseTicker
+        ws.Cells(2, 17).Value = Format(GreatestIncrease, "Percent")
+        ws.Cells(3, 16).Value = GreatestDecreaseTicker
+        ws.Cells(3, 17).Value = Format(GreatestDecrease, "Percent")
+        ws.Cells(4, 16).Value = GreatestVolumeTicker
+        ws.Cells(4, 17).Value = GreatestVolume
+        
+        GreatestIncrease = 0
+        GreatestDecrease = 0
+        GreatestVolume = 0
+        
+    Next ws
+
+End Sub
