@@ -1,0 +1,55 @@
+/* element */
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-color: whitesmoke;
+}
+
+p {
+    font-size: 14px;
+    line-height: 2;
+}
+
+/* id */
+#logo {
+    background-color: #39CCCC;
+    color: white;
+    cursor: pointer;
+}
+
+#area {
+    background-color: white;
+}
+
+/* class */
+.description-content{
+    background-color:white;
+    padding: 15px;
+    box-sizing: border-box;
+
+}
+
+.navbar-default {
+    background-color: white;
+}
+
+.description-hr {
+    border-color:  #39CCCC;
+}
+
+.description-header {
+    color: #39CCCC;
+}
+
+.white-background {
+    background-color: white;
+}
+
+.comparison-header {
+    text-align: center;
+    color: #39CCCC;
+}
+
+/* TODO: implement border on visualizations grid */
+.border {
+    border: 1px solid #39CCCC;
+}
